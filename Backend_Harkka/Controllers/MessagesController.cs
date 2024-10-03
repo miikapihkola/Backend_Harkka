@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Backend_Harkka.Models;
 using Backend_Harkka.Services;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using Backend_Harkka.Middleware;
 
 namespace Backend_Harkka.Controllers
 {
@@ -15,10 +18,12 @@ namespace Backend_Harkka.Controllers
     public class MessagesController : ControllerBase
     {
         private readonly IMessageService _messageService;
+        private readonly IUserAuthenticationService _userAuthenticationService;
 
-        public MessagesController(IMessageService service)
+        public MessagesController(IMessageService service, IUserAuthenticationService authenticationService)
         {
             _messageService = service;
+            _userAuthenticationService = authenticationService;
         }
 
         // GET: api/Messages
@@ -80,8 +85,14 @@ namespace Backend_Harkka.Controllers
 
         // DELETE: api/Messages/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteMessage(long id)
         {
+            string username = this.User.FindFirst(ClaimTypes.Name).Value;
+            if (!await _userAuthenticationService.isMyMessage(username, id))
+            {
+                return BadRequest(); //tai Forbid()
+            }
             bool result = await _messageService.DeleteMessageAsync(id);
             if (!result)
             {
