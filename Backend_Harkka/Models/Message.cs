@@ -14,7 +14,7 @@ namespace Backend_Harkka.Models
         [Required]
         public string Body { get; set; }
 
-
+        [Required]
         public User Sender { get; set; }
         public User? Recipient { get; set; }
         public Message? PrevMessage { get; set; }

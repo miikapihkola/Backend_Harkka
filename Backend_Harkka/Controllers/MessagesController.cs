@@ -104,7 +104,7 @@ namespace Backend_Harkka.Controllers
                 return Problem();
             }
 
-            return CreatedAtAction("GetMessage", new { id = message.Id }, message);
+            return CreatedAtAction("GetMessage", new { id = newMessage.Id }, newMessage);
         }
 
         // DELETE: api/Messages/5

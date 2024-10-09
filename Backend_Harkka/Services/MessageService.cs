@@ -52,6 +52,7 @@ namespace Backend_Harkka.Services
             {
                 dbMessage.Title = message.Title;
                 dbMessage.Body = message.Body;
+                dbMessage.EditTime = DateTime.Now;
                 return await _repository.UpdateMessageAsync(dbMessage);
             }
             return false;
@@ -87,11 +88,14 @@ namespace Backend_Harkka.Services
             newMessage.Id = dTO.Id;
             newMessage.Title = dTO.Title;
             newMessage.Body = dTO.Body;
+            newMessage.SendTime = DateTime.Now;
 
             User? sender = await _userRepository.GetUserAsync(dTO.Sender);
             if (sender != null)
             {
                 newMessage.Sender = sender;
+                sender.MessagesSent++;
+                await _userRepository.UpdateUserAsync(sender);
             }
             if (dTO.Recipient != null)
             {

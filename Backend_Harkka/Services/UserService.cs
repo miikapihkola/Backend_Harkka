@@ -53,6 +53,9 @@ namespace Backend_Harkka.Services
                 return null;
             }
 
+            user.UnreadMessages = 0;
+            user.MessagesSent = 0;
+            user.MessagesReceived = 0;
             //user.UserCreated = DateTime.Now;
             //user.LastLogin = DateTime.Now;
 
