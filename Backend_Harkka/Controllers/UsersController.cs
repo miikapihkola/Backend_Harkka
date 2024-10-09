@@ -23,6 +23,10 @@ namespace Backend_Harkka.Controllers
         }
 
         // GET: api/Users
+        /// <summary>
+        /// Gets the information of all users in database
+        /// </summary>
+        /// <returns>List of Users</returns>
         [HttpGet]
         [Authorize]
         public async Task<ActionResult<IEnumerable<UserDTO>>> GetUsers()
@@ -31,6 +35,11 @@ namespace Backend_Harkka.Controllers
         }
 
         // GET: api/Users/username
+        /// <summary>
+        /// Gets user specified by username
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns>User information for one user or empty</returns>
         [HttpGet("{username}")]
         public async Task<ActionResult<UserDTO>> GetUser(string username)
         {
@@ -46,6 +55,12 @@ namespace Backend_Harkka.Controllers
 
         // PUT: api/Users/username
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Update user information
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="user"></param>
+        /// <returns></returns>
         [HttpPut("{username}")]
         public async Task<IActionResult> PutUser(string username, User user)
         {
@@ -64,6 +79,11 @@ namespace Backend_Harkka.Controllers
 
         // POST: api/Users
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Create new user
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult<UserDTO>> PostUser(User user)
         {
@@ -77,6 +97,11 @@ namespace Backend_Harkka.Controllers
         }
 
         // DELETE: api/Users/username
+        /// <summary>
+        /// Delete user specified by username
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
         [HttpDelete("{username}")]
         public async Task<IActionResult> DeleteUser(string username)
         {

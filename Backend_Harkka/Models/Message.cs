@@ -6,8 +6,10 @@ namespace Backend_Harkka.Models
     {
         public long Id { get; set; }
         [StringLength(100, MinimumLength = 1)]
+        [Required]
         public string Title { get; set; }
         [StringLength(1000, MinimumLength = 1)]
+        [Required]
         public string Body { get; set; }
         public User Sender { get; set; }
         public User? Recipient { get; set; }

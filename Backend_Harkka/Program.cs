@@ -4,6 +4,8 @@ using Backend_Harkka.Repositories;
 using Backend_Harkka.Services;
 using Backend_Harkka.Middleware;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.OpenApi.Models;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 // http://localhost:5031/api/Message
@@ -15,7 +17,28 @@ builder.Services.AddDbContext<MessageServiceContext>(opt => opt.UseSqlServer(bui
 builder.Services.AddAuthentication("BasicAuthentication").AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    {
+        Version = "v1",
+        Title = "Message API",
+        Description = "An ASP.NET Core Web API for sending and receiving messages",
+        TermsOfService = null, //new Uri("https://example.com/terms"),
+        Contact = null,/*new OpenApiContact
+        {
+            Name = "Example Contact"
+        },*/
+        License = null,/*new OpenApiLicense
+        {
+            Name = "Example License",
+            Url = new Uri("htps://example.com/license")
+        }*/
+    });
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+});
+
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IMessageService, MessageService>();

@@ -6,6 +6,7 @@ namespace Backend_Harkka.Models
     {
         public long Id { get; set; }
         [StringLength(50, MinimumLength = 3)]
+        [Required]
         public string UserName { get; set; }
         [MaxLength(25)]
         public string? FirstName { get; set; }
@@ -14,7 +15,9 @@ namespace Backend_Harkka.Models
         [EmailAddress, MaxLength(100)]
         public string? Email { get; set; }
         [StringLength(100, MinimumLength = 4)]
+        [Required]
         public string Password { get; set; }
+        public byte[]? Salt { get; set; }
         public DateTime? UserCreated { get; set; }
         public DateTime? LastLogin { get; set; }
         public long? MessagesSent { get; set; }

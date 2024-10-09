@@ -1,4 +1,5 @@
-﻿using Backend_Harkka.Models;
+﻿using Backend_Harkka.Middleware;
+using Backend_Harkka.Models;
 using Backend_Harkka.Repositories;
 
 namespace Backend_Harkka.Services
@@ -6,9 +7,11 @@ namespace Backend_Harkka.Services
     public class UserService : IUserService
     {
         private readonly IUserRepository _repository;
-        public UserService(IUserRepository repository)
+        private readonly IUserAuthenticationService _userAuthenticationService;
+        public UserService(IUserRepository repository, IUserAuthenticationService userAuthenticationService)
         {
             _repository = repository;
+            _userAuthenticationService = userAuthenticationService;
         }
 
         public async Task<bool> DeleteUserAsync(string username)
@@ -49,12 +52,15 @@ namespace Backend_Harkka.Services
             {
                 return null;
             }
+
             user.UserCreated = DateTime.Now;
             user.LastLogin = DateTime.Now;
-            User? newUser = await _repository.NewUserAsync(user);
+
+            User? newUser =_userAuthenticationService.CreateUserCredentials(user);
+
             if (newUser != null)
             {
-                return UserToDTO(newUser);
+                return UserToDTO(await _repository.NewUserAsync(user));
             }
             return null;
         }
