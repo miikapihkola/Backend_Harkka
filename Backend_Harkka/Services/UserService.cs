@@ -53,8 +53,8 @@ namespace Backend_Harkka.Services
                 return null;
             }
 
-            user.UserCreated = DateTime.Now;
-            user.LastLogin = DateTime.Now;
+            //user.UserCreated = DateTime.Now;
+            //user.LastLogin = DateTime.Now;
 
             User? newUser =_userAuthenticationService.CreateUserCredentials(user);
 

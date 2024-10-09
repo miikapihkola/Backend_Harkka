@@ -41,6 +41,7 @@ namespace Backend_Harkka.Controllers
         /// <param name="username"></param>
         /// <returns>User information for one user or empty</returns>
         [HttpGet("{username}")]
+        [Authorize]
         public async Task<ActionResult<UserDTO>> GetUser(string username)
         {
             UserDTO? user = await _userService.GetUserAsync(username);
@@ -62,6 +63,7 @@ namespace Backend_Harkka.Controllers
         /// <param name="user"></param>
         /// <returns></returns>
         [HttpPut("{username}")]
+        [Authorize]
         public async Task<IActionResult> PutUser(string username, User user)
         {
             if (username != user.UserName)
@@ -103,6 +105,7 @@ namespace Backend_Harkka.Controllers
         /// <param name="username"></param>
         /// <returns></returns>
         [HttpDelete("{username}")]
+        [Authorize]
         public async Task<IActionResult> DeleteUser(string username)
         {
             bool result = await _userService.DeleteUserAsync(username);

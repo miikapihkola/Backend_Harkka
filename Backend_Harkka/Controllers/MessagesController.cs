@@ -27,14 +27,25 @@ namespace Backend_Harkka.Controllers
         }
 
         // GET: api/Messages
+        /// <summary>
+        /// Get all messages
+        /// </summary>
+        /// <returns>All messages</returns>
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<MessageDTO>>> GetMessages()
         {
             return Ok(await _messageService.GetMessagesAsync());
         }
 
         // GET: api/Messages/5
+        /// <summary>
+        /// Get message by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Message specified by id or empty</returns>
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<MessageDTO>> GetMessage(long id)
         {
             MessageDTO message = await _messageService.GetMessageAsync(id);
@@ -49,7 +60,14 @@ namespace Backend_Harkka.Controllers
 
         // PUT: api/Messages/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Update message by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="message"></param>
+        /// <returns></returns>
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutMessage(long id, MessageDTO message)
         {
             if (id != message.Id)
@@ -70,7 +88,13 @@ namespace Backend_Harkka.Controllers
 
         // POST: api/Messages
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Create new message
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<MessageDTO>> PostMessage(MessageDTO message)
         {
             MessageDTO? newMessage = await _messageService.NewMessageAsync(message);
@@ -84,6 +108,11 @@ namespace Backend_Harkka.Controllers
         }
 
         // DELETE: api/Messages/5
+        /// <summary>
+        /// Delete message specified by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         [Authorize]
         public async Task<IActionResult> DeleteMessage(long id)
