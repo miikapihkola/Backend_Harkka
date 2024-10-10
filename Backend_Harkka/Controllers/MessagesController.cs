@@ -28,7 +28,7 @@ namespace Backend_Harkka.Controllers
 
         // GET: api/Messages
         /// <summary>
-        /// Get all messages
+        /// Get all public messages
         /// </summary>
         /// <returns>All messages</returns>
         [HttpGet]
@@ -36,6 +36,26 @@ namespace Backend_Harkka.Controllers
         public async Task<ActionResult<IEnumerable<MessageDTO>>> GetMessages()
         {
             return Ok(await _messageService.GetMessagesAsync());
+        }
+
+        // GET: api/Messages/user/sent
+        [HttpGet("{user}/sent")]
+        [Authorize]
+
+        // claim vertailu
+        public async Task<ActionResult<IEnumerable<MessageDTO>>> GetMySentMessages(User user) //muuta user as username
+        {
+            return Ok(await _messageService.GetMySentMessagesAsync(user));
+        }
+
+        // GET: api/Messages/user/received
+        [HttpGet("{user}/received")]
+        [Authorize]
+
+        //claim vertailu
+        public async Task<ActionResult<IEnumerable<MessageDTO>>> GetMyReceivedMessages(User user) //muuta user as username
+        {
+            return Ok(await _messageService.GetMyReceivedMessagesAsync(user));
         }
 
         // GET: api/Messages/5

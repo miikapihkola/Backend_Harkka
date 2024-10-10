@@ -28,10 +28,22 @@ namespace Backend_Harkka.Repositories
         {
             return await _context.Messages.FindAsync(id);
         }
-
         public async Task<IEnumerable<Message>> GetMessagesAsync()
         {
-            return await _context.Messages.Include(s=>s.Sender).Include(s=>s.Recipient).ToListAsync();
+            Range r = new Range(0,20);
+            return await _context.Messages.Include(s=>s.Sender).Where(x => x.Recipient == null).OrderByDescending(x => x.SendTime).Take(r).ToListAsync();
+        }
+
+        public async Task<IEnumerable<Message>> GetMyReceivedMessagesAsync(User user)
+        {
+            Range r = new Range(0, 20);
+            return await _context.Messages.Include(s => s.Sender).Where(x => x.Recipient == user).OrderByDescending(x => x.SendTime).Take(r).ToListAsync();
+        }
+
+        public async Task<IEnumerable<Message>> GetMySentMessagesAsync(User user)
+        {
+            Range r = new Range(0, 20);
+            return await _context.Messages.Include(s => s.Recipient).Where(x => x.Sender == user).OrderByDescending(x => x.SendTime).Take(r).ToListAsync();
         }
 
         public async Task<Message> NewMessageAsync(Message message)

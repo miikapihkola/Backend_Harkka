@@ -39,6 +39,27 @@ namespace Backend_Harkka.Services
             }
             return result;
         }
+        public async Task<IEnumerable<MessageDTO>> GetMySentMessagesAsync(User user) //muuta user as username
+        {
+            IEnumerable<Message> messages = await _repository.GetMySentMessagesAsync(user);
+            List<MessageDTO> result = new List<MessageDTO>();
+            foreach (Message message in messages)
+            {
+                result.Add(MessageToDTO(message));
+            }
+            return result;
+        }
+
+        public async Task<IEnumerable<MessageDTO>> GetMyReceivedMessagesAsync(User user) //muuta user as username
+        {
+            IEnumerable<Message> messages = await _repository.GetMyReceivedMessagesAsync(user);
+            List<MessageDTO> result = new List<MessageDTO>();
+            foreach (Message message in messages)
+            {
+                result.Add(MessageToDTO(message));
+            }
+            return result;
+        }
 
         public async Task<MessageDTO> NewMessageAsync(MessageDTO message)
         {
@@ -113,5 +134,7 @@ namespace Backend_Harkka.Services
             }
             return newMessage;
         }
+
+
     }
 }
