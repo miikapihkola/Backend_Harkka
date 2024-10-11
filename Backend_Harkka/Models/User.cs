@@ -26,7 +26,6 @@ namespace Backend_Harkka.Models
         public DateTime? LastLogin { get; set; }
         public long? MessagesSent { get; set; }
         public long? MessagesReceived { get; set; }
-        public long? UnreadMessages {  get; set; }
     }
     public class UserDTO
     {
@@ -44,6 +43,5 @@ namespace Backend_Harkka.Models
         public DateTime? LastLogin { get; set; }
         public long? MessagesSent { get; set; }
         public long? MessagesReceived { get; set; }
-        public long? UnreadMessages { get; set; }
     }
 }

@@ -43,9 +43,9 @@ namespace Backend_Harkka.Controllers
         [Authorize]
 
         // claim vertailu
-        public async Task<ActionResult<IEnumerable<MessageDTO>>> GetMySentMessages(User user) //muuta user as username
+        public async Task<ActionResult<IEnumerable<MessageDTO>>> GetMySentMessages(string userName)
         {
-            return Ok(await _messageService.GetMySentMessagesAsync(user));
+            return Ok(await _messageService.GetMySentMessagesAsync(userName));
         }
 
         // GET: api/Messages/user/received
@@ -53,9 +53,9 @@ namespace Backend_Harkka.Controllers
         [Authorize]
 
         //claim vertailu
-        public async Task<ActionResult<IEnumerable<MessageDTO>>> GetMyReceivedMessages(User user) //muuta user as username
+        public async Task<ActionResult<IEnumerable<MessageDTO>>> GetMyReceivedMessages(string userName)
         {
-            return Ok(await _messageService.GetMyReceivedMessagesAsync(user));
+            return Ok(await _messageService.GetMyReceivedMessagesAsync(userName));
         }
 
         // GET: api/Messages/5

@@ -6,19 +6,19 @@ namespace Backend_Harkka.Services
 {
     public class MessageService : IMessageService
     {
-        private readonly IMessageRepository _repository;
+        private readonly IMessageRepository _messageRepository;
         private readonly IUserRepository _userRepository;
-        public MessageService(IMessageRepository repository, IUserRepository userRepository)
+        public MessageService(IMessageRepository messageRepository, IUserRepository userRepository)
         {
-            _repository = repository;
+            _messageRepository = messageRepository;
             _userRepository = userRepository;
         }
         public async Task<bool> DeleteMessageAsync(long id)
         {
-            Message? message=await _repository.GetMessageAsync(id);
+            Message? message=await _messageRepository.GetMessageAsync(id);
             if (message != null)
             {
-                await _repository.DeleteMessageAsync(message);
+                await _messageRepository.DeleteMessageAsync(message);
                 return true;
             }
             return false;
@@ -26,12 +26,12 @@ namespace Backend_Harkka.Services
 
         public async Task<MessageDTO?> GetMessageAsync(long id)
         {
-           return MessageToDTO(await _repository.GetMessageAsync(id));
+           return MessageToDTO(await _messageRepository.GetMessageAsync(id));
         }
 
         public async Task<IEnumerable<MessageDTO>> GetMessagesAsync()
         {
-            IEnumerable<Message> messages = await _repository.GetMessagesAsync();
+            IEnumerable<Message> messages = await _messageRepository.GetMessagesAsync();
             List<MessageDTO> result = new List<MessageDTO>();
             foreach (Message message in messages)
             {
@@ -39,9 +39,9 @@ namespace Backend_Harkka.Services
             }
             return result;
         }
-        public async Task<IEnumerable<MessageDTO>> GetMySentMessagesAsync(User user) //muuta user as username
+        public async Task<IEnumerable<MessageDTO>> GetMySentMessagesAsync(string userName)
         {
-            IEnumerable<Message> messages = await _repository.GetMySentMessagesAsync(user);
+            IEnumerable<Message> messages = await _messageRepository.GetMySentMessagesAsync(await _userRepository.GetUserAsync(userName));
             List<MessageDTO> result = new List<MessageDTO>();
             foreach (Message message in messages)
             {
@@ -50,9 +50,9 @@ namespace Backend_Harkka.Services
             return result;
         }
 
-        public async Task<IEnumerable<MessageDTO>> GetMyReceivedMessagesAsync(User user) //muuta user as username
+        public async Task<IEnumerable<MessageDTO>> GetMyReceivedMessagesAsync(string userName)
         {
-            IEnumerable<Message> messages = await _repository.GetMyReceivedMessagesAsync(user);
+            IEnumerable<Message> messages = await _messageRepository.GetMyReceivedMessagesAsync(await _userRepository.GetUserAsync(userName));
             List<MessageDTO> result = new List<MessageDTO>();
             foreach (Message message in messages)
             {
@@ -63,18 +63,18 @@ namespace Backend_Harkka.Services
 
         public async Task<MessageDTO> NewMessageAsync(MessageDTO message)
         {
-            return MessageToDTO(await _repository.NewMessageAsync(await DTOToMessageAsync(message)));
+            return MessageToDTO(await _messageRepository.NewMessageAsync(await DTOToMessageAsync(message)));
         }
 
         public async Task<bool> UpdateMessageAsync(MessageDTO message)
         {
-            Message? dbMessage = await _repository.GetMessageAsync(message.Id);
+            Message? dbMessage = await _messageRepository.GetMessageAsync(message.Id);
             if (dbMessage != null)
             {
                 dbMessage.Title = message.Title;
                 dbMessage.Body = message.Body;
                 dbMessage.EditTime = DateTime.Now;
-                return await _repository.UpdateMessageAsync(dbMessage);
+                return await _messageRepository.UpdateMessageAsync(dbMessage);
             }
             return false;
         }
@@ -129,7 +129,7 @@ namespace Backend_Harkka.Services
 
             if (dTO.PrevMessageId != null && dTO.PrevMessageId != 0)
             {
-                Message prevMessage = await _repository.GetMessageAsync((long)dTO.PrevMessageId);
+                Message prevMessage = await _messageRepository.GetMessageAsync((long)dTO.PrevMessageId);
                 newMessage.PrevMessage = prevMessage;
             }
             return newMessage;
