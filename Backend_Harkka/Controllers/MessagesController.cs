@@ -10,6 +10,7 @@ using Backend_Harkka.Services;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Backend_Harkka.Middleware;
+using Microsoft.AspNetCore.Identity;
 
 namespace Backend_Harkka.Controllers
 {
@@ -32,7 +33,9 @@ namespace Backend_Harkka.Controllers
         /// </summary>
         /// <returns>All messages</returns>
         [HttpGet]
-        [Authorize]
+
+        // Lisää sivu numero
+
         public async Task<ActionResult<IEnumerable<MessageDTO>>> GetMessages()
         {
             return Ok(await _messageService.GetMessagesAsync());
@@ -42,9 +45,14 @@ namespace Backend_Harkka.Controllers
         [HttpGet("{user}/sent")]
         [Authorize]
 
-        // claim vertailu
+        // Lisää sivu numero
+
         public async Task<ActionResult<IEnumerable<MessageDTO>>> GetMySentMessages(string userName)
         {
+            if (userName != this.User.FindFirst(ClaimTypes.Name).Value)
+            {
+                return Forbid();
+            }
             return Ok(await _messageService.GetMySentMessagesAsync(userName));
         }
 
@@ -52,9 +60,14 @@ namespace Backend_Harkka.Controllers
         [HttpGet("{user}/received")]
         [Authorize]
 
-        //claim vertailu
+        // Lisää sivu numero
+
         public async Task<ActionResult<IEnumerable<MessageDTO>>> GetMyReceivedMessages(string userName)
         {
+            if (userName != this.User.FindFirst(ClaimTypes.Name).Value)
+            {
+                return Forbid();
+            }
             return Ok(await _messageService.GetMyReceivedMessagesAsync(userName));
         }
 
@@ -68,6 +81,11 @@ namespace Backend_Harkka.Controllers
         [Authorize]
         public async Task<ActionResult<MessageDTO>> GetMessage(long id)
         {
+            string userName = this.User.FindFirst(ClaimTypes.Name).Value;
+            if (!await _userAuthenticationService.isMyMessage(userName, id))
+            {
+                return Forbid();
+            }
             MessageDTO message = await _messageService.GetMessageAsync(id);
 
             if (message == null)
@@ -90,6 +108,12 @@ namespace Backend_Harkka.Controllers
         [Authorize]
         public async Task<IActionResult> PutMessage(long id, MessageDTO message)
         {
+            string userName = this.User.FindFirst(ClaimTypes.Name).Value;
+            if (!await _userAuthenticationService.isMyMessage(userName, message.Id))
+            {
+                return Forbid();
+            }
+
             if (id != message.Id)
             {
                 return BadRequest();
@@ -135,12 +159,16 @@ namespace Backend_Harkka.Controllers
         /// <returns></returns>
         [HttpDelete("{id}")]
         [Authorize]
+
+        // Mahdollinen admin/moderator oikeus
+        // Delete muuttaminen vaan viestin tietojen poistamiseen
+
         public async Task<IActionResult> DeleteMessage(long id)
         {
-            string username = this.User.FindFirst(ClaimTypes.Name).Value;
-            if (!await _userAuthenticationService.isMyMessage(username, id))
+            string userName = this.User.FindFirst(ClaimTypes.Name).Value;
+            if (!await _userAuthenticationService.isMyMessage(userName, id))
             {
-                return BadRequest(); //tai Forbid()
+                return Forbid();
             }
             bool result = await _messageService.DeleteMessageAsync(id);
             if (!result)

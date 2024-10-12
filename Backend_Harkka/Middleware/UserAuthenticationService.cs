@@ -1,6 +1,8 @@
 ﻿using Backend_Harkka.Models;
 using Backend_Harkka.Repositories;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 using System.Security.Cryptography;
 
 namespace Backend_Harkka.Middleware
@@ -10,6 +12,7 @@ namespace Backend_Harkka.Middleware
         Task<User?> Authenticate(string username, string password);
         public User CreateUserCredentials(User user);
         Task<bool> isMyMessage(string username, long messageId);
+        Task<bool> isMe(string username, string userClaim);
     }
     public class UserAuthenticationService : IUserAuthenticationService
     {
@@ -86,5 +89,16 @@ namespace Backend_Harkka.Middleware
             return false;
 
         }
+        public async Task<bool> isMe(string username, string userClaim)
+        {
+            User? user = await _userRepository.GetUserAsync(username);
+            if (user == null)
+            {
+                return false;
+            }
+            
+            return false;
+        }
+
     }
 }

@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Backend_Harkka.Models;
 using Backend_Harkka.Services;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace Backend_Harkka.Controllers
 {
@@ -66,6 +67,10 @@ namespace Backend_Harkka.Controllers
         [Authorize]
         public async Task<IActionResult> PutUser(string username, User user)
         {
+            if (username != this.User.FindFirst(ClaimTypes.Name).Value)
+            {
+                return Forbid();
+            }
             if (username != user.UserName)
             {
                 return BadRequest();
@@ -106,8 +111,15 @@ namespace Backend_Harkka.Controllers
         /// <returns></returns>
         [HttpDelete("{username}")]
         [Authorize]
+
+        // Delete muuttaminen sellaiseksi että username muutetaan deleted ja poistetaan muut tietueet sekä kutsutaan message controllerin deleteä jokaseen viestiin
+
         public async Task<IActionResult> DeleteUser(string username)
         {
+            if (username != this.User.FindFirst(ClaimTypes.Name).Value)
+            {
+                return Forbid();
+            }
             bool result = await _userService.DeleteUserAsync(username);
             if (!result)
             {

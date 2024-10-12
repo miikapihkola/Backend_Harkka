@@ -124,6 +124,8 @@ namespace Backend_Harkka.Services
                 if (recipient != null)
                 {
                     newMessage.Recipient = recipient;
+                    recipient.MessagesReceived++;
+                    await _userRepository.UpdateUserAsync(recipient);
                 }
             }
 
