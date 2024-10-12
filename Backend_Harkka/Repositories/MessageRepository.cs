@@ -1,10 +1,14 @@
 ﻿using Backend_Harkka.Models;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace Backend_Harkka.Repositories
 {
     public class MessageRepository : IMessageRepository
     {
+        const int itemsPerPage = 20;
+
         private readonly MessageServiceContext _context;
         public MessageRepository(MessageServiceContext context)
         {
@@ -23,24 +27,28 @@ namespace Backend_Harkka.Repositories
                 return true;
             }
         }
-
         public async Task<Message?> GetMessageAsync(long id)
         {
             return await _context.Messages.FindAsync(id);
         }
-        public async Task<IEnumerable<Message>> GetMessagesAsync()
+        public async Task<IEnumerable<Message>> GetMessagesAsync(int page)
         {
-            Range r = new Range(0,20);
+            
+            if (page < 1) page = 1;
+            int maxPage = await GetLastPageAsync();
+            if (page > maxPage) page = maxPage;
+            page--; // Testaa tarviiko näitä
+            Range r = new Range(page, page + itemsPerPage);
             return await _context.Messages.Include(s=>s.Sender).Where(x => x.Recipient == null).OrderByDescending(x => x.SendTime).Take(r).ToListAsync();
         }
 
-        public async Task<IEnumerable<Message>> GetMyReceivedMessagesAsync(User user)
+        public async Task<IEnumerable<Message>> GetMyReceivedMessagesAsync(User user, int page)
         {
             Range r = new Range(0, 20);
             return await _context.Messages.Include(s => s.Sender).Where(x => x.Recipient == user).OrderByDescending(x => x.SendTime).Take(r).ToListAsync();
         }
 
-        public async Task<IEnumerable<Message>> GetMySentMessagesAsync(User user)
+        public async Task<IEnumerable<Message>> GetMySentMessagesAsync(User user, int page)
         {
             Range r = new Range(0, 20);
             return await _context.Messages.Include(s => s.Recipient).Where(x => x.Sender == user).OrderByDescending(x => x.SendTime).Take(r).ToListAsync();
@@ -65,6 +73,14 @@ namespace Backend_Harkka.Repositories
                 return false;
             }
             return true;
+        }
+        public async Task<int> GetLastPageAsync()
+        {
+            // Miksi await ei toimi?
+            long lastId = _context.Messages.OrderByDescending(x => x.SendTime).LastOrDefault().Id;
+            double lastPage = lastId / itemsPerPage;
+            if (lastPage - Convert.ToInt32(lastPage) == 0) return Convert.ToInt32(lastPage); 
+            return Convert.ToInt32(lastPage) + 1;
         }
     }
 }

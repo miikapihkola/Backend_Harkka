@@ -29,9 +29,9 @@ namespace Backend_Harkka.Services
            return MessageToDTO(await _messageRepository.GetMessageAsync(id));
         }
 
-        public async Task<IEnumerable<MessageDTO>> GetMessagesAsync()
+        public async Task<IEnumerable<MessageDTO>> GetMessagesAsync(int page)
         {
-            IEnumerable<Message> messages = await _messageRepository.GetMessagesAsync();
+            IEnumerable<Message> messages = await _messageRepository.GetMessagesAsync(page);
             List<MessageDTO> result = new List<MessageDTO>();
             foreach (Message message in messages)
             {
@@ -39,9 +39,9 @@ namespace Backend_Harkka.Services
             }
             return result;
         }
-        public async Task<IEnumerable<MessageDTO>> GetMySentMessagesAsync(string userName)
+        public async Task<IEnumerable<MessageDTO>> GetMySentMessagesAsync(string userName, int page)
         {
-            IEnumerable<Message> messages = await _messageRepository.GetMySentMessagesAsync(await _userRepository.GetUserAsync(userName));
+            IEnumerable<Message> messages = await _messageRepository.GetMySentMessagesAsync(await _userRepository.GetUserAsync(userName), page);
             List<MessageDTO> result = new List<MessageDTO>();
             foreach (Message message in messages)
             {
@@ -50,9 +50,9 @@ namespace Backend_Harkka.Services
             return result;
         }
 
-        public async Task<IEnumerable<MessageDTO>> GetMyReceivedMessagesAsync(string userName)
+        public async Task<IEnumerable<MessageDTO>> GetMyReceivedMessagesAsync(string userName, int page)
         {
-            IEnumerable<Message> messages = await _messageRepository.GetMyReceivedMessagesAsync(await _userRepository.GetUserAsync(userName));
+            IEnumerable<Message> messages = await _messageRepository.GetMyReceivedMessagesAsync(await _userRepository.GetUserAsync(userName), page);
             List<MessageDTO> result = new List<MessageDTO>();
             foreach (Message message in messages)
             {

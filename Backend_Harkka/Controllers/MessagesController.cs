@@ -32,43 +32,43 @@ namespace Backend_Harkka.Controllers
         /// Get all public messages
         /// </summary>
         /// <returns>All messages</returns>
-        [HttpGet]
+        [HttpGet("p{page}")]
 
         // Lisää sivu numero
 
-        public async Task<ActionResult<IEnumerable<MessageDTO>>> GetMessages()
+        public async Task<ActionResult<IEnumerable<MessageDTO>>> GetMessages(int page)
         {
-            return Ok(await _messageService.GetMessagesAsync());
+            return Ok(await _messageService.GetMessagesAsync(page));
         }
 
         // GET: api/Messages/user/sent
-        [HttpGet("{user}/sent")]
+        [HttpGet("{username}/sent/p{page}")]
         [Authorize]
 
         // Lisää sivu numero
 
-        public async Task<ActionResult<IEnumerable<MessageDTO>>> GetMySentMessages(string userName)
+        public async Task<ActionResult<IEnumerable<MessageDTO>>> GetMySentMessages(string username, int page)
         {
-            if (userName != this.User.FindFirst(ClaimTypes.Name).Value)
+            if (username != this.User.FindFirst(ClaimTypes.Name).Value)
             {
                 return Forbid();
             }
-            return Ok(await _messageService.GetMySentMessagesAsync(userName));
+            return Ok(await _messageService.GetMySentMessagesAsync(username, page));
         }
 
         // GET: api/Messages/user/received
-        [HttpGet("{user}/received")]
+        [HttpGet("{username}/received/p{page}")]
         [Authorize]
 
         // Lisää sivu numero
 
-        public async Task<ActionResult<IEnumerable<MessageDTO>>> GetMyReceivedMessages(string userName)
+        public async Task<ActionResult<IEnumerable<MessageDTO>>> GetMyReceivedMessages(string username, int page)
         {
-            if (userName != this.User.FindFirst(ClaimTypes.Name).Value)
+            if (username != this.User.FindFirst(ClaimTypes.Name).Value)
             {
                 return Forbid();
             }
-            return Ok(await _messageService.GetMyReceivedMessagesAsync(userName));
+            return Ok(await _messageService.GetMyReceivedMessagesAsync(username, page));
         }
 
         // GET: api/Messages/5
