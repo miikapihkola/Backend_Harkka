@@ -1,5 +1,7 @@
 # Backend_Harkka
 
+Warning: Read this txt as a file, not in narrow previw window. Line wraping should be OFF
+
 -----------------------
 Rajapinnat:
 
@@ -65,7 +67,7 @@ Wipe message specified by id
 Esimerkki viesti ja käyttäjä:
 
 Headeriin:
-apikey: LAIHFOEDFAOFJALOFAJSFHWQ
+ApiKey: LAIHFOEDFAOFJALOFAJSFHWQ
 Authorization: Basic YWFhOnh5emE=
 (authorization on muotoa "Basic " + Basic64 koodattu"username:password")
 Basic64 koodaus esim sivulta https://www.base64encode.org/
@@ -138,33 +140,44 @@ GET: api/Messages/aaa/received/p_2
 
 > MessagesController.cs
 Ensimmäisenä kutsun jälkeen on [Authorization] eli tarkistetaan oikeudet.
-  > BasicAuthenticationHandler.cs
-  Ensin tarkistetaan puuttuuko apiavain ja sen jälkeen onko apiavain oikein.
-  Seuraavana otetaan basic64:nä annetusta autentikaatiosta erileen username ja password ja lähetetään ne userautentikaatioserviseen
-    > UserAuthenticationService.cs
-    Tarkistetaan salasana: Ensin haetaan käyttäjän tiedot käyttäen usernamea
-      > UserRepository.cs
-      Palautetaan useri (tai jos ei löytynyt niin null)
-    Tarkistetaan löytyikö käyttäjä ja ettei sitä ole merkattu poistetuksi
-    Tämän jälkeen muutetaan kirjautumiseessa annettu salasana salattuun muotoon käyttäen käyttäjän suolaa (luotu randomilla kun käyttäjä on luotu) ja sha256 salausta
-    Tarkistetaan onko salattu salasana sama kuin käyttäjän tietokantaan tallennettu salattu salasana
-    Jos onnistunut tunnistautuminen niin palautetaan Useri
-  Tarkistetaan ettei palautettu useri ole nulli
-  Tämän jälkeen luodaan käyttäjästä claimi
-  Palautetaan onnistunut autentikaatio tiketti
+    > BasicAuthenticationHandler.cs
+    Ensin tarkistetaan puuttuuko apiavain ja sen jälkeen onko apiavain oikein.
+    Seuraavana otetaan basic64:nä annetusta autentikaatiosta erileen username ja password ja lähetetään ne userautentikaatioserviseen
+        > UserAuthenticationService.cs
+        Tarkistetaan salasana: Ensin haetaan käyttäjän tiedot käyttäen usernamea
+            > UserRepository.cs
+            Palautetaan useri (tai jos ei löytynyt niin null)
+        Tarkistetaan löytyikö käyttäjä ja ettei sitä ole merkattu poistetuksi
+        Tämän jälkeen muutetaan kirjautumiseessa annettu salasana salattuun muotoon käyttäen käyttäjän suolaa (luotu randomilla kun käyttäjä on luotu) ja sha256 salausta
+        Tarkistetaan onko salattu salasana sama kuin käyttäjän tietokantaan tallennettu salattu salasana
+        Jos onnistunut tunnistautuminen niin palautetaan Useri
+    Tarkistetaan ettei palautettu useri ole nulli
+    Tämän jälkeen luodaan käyttäjästä claimi
+    Palautetaan onnistunut autentikaatio tiketti
 Tarkistetaan että viestin osoitteen username täsmää claimin usernameen
 Kutsutaan messageServicen async taskia GetMyReceivedMessagesAsync
-  > MessageService.cs
-  Välitetään viestipyyntö repositorylle
-    > MessageRepository.cs
-    Haetaan repositorystä niiden messageiden määrä joissa annettu käyttäjä on vastaanottajana
-    ConfirmPagella tarkistetaan että annettu sivunumero on validi (jos on annettu liian iso tai alle 1 sivunumerona niin se pakotetetaan sopivaksi)
-    Tässä tapauksessa palautetaan kaikki viestit, joissa vastaanottajana on annettu käyttäjä. Viestit on aikajärjestyksessä (tuorein viesti ensimmäisenä) ja palautetut viestit ovat numerot 21 to 40. Viesteihin sisällytetään lähettäjän tiedot.
-  Luodaan lista johon lisätään loopilla kaikki palautuneet viestit sen jälkeen kun ne on convertoitu dto:ksi (conversiossa senderi ja recipient muutetaan User olioista pelkiksi usernameiksi)
-  Palautetaan kyseinen lista
+    > MessageService.cs
+    Välitetään viestipyyntö repositorylle
+        > MessageRepository.cs
+        Haetaan repositorystä niiden messageiden määrä joissa annettu käyttäjä on vastaanottajana
+        ConfirmPagella tarkistetaan että annettu sivunumero on validi (jos on annettu liian iso tai alle 1 sivunumerona niin se pakotetetaan sopivaksi)
+        Tässä tapauksessa palautetaan kaikki viestit, joissa vastaanottajana on annettu käyttäjä. Viestit on aikajärjestyksessä (tuorein viesti ensimmäisenä) ja palautetut viestit ovat numerot 21 to 40. Viesteihin sisällytetään lähettäjän tiedot.
+    Luodaan lista johon lisätään loopilla kaikki palautuneet viestit sen jälkeen kun ne on convertoitu dto:ksi (conversiossa senderi ja recipient muutetaan User olioista pelkiksi usernameiksi)
+    Palautetaan kyseinen lista
 Palautetaan lista ja annetaan Koodi "Ok" joka muuttuu numeroksi 200
   
+-----------------------
+Jatkokehitys ideoita:
 
+Admin oikeudet
+    Voi lukea muiden käyttäjien viestejä
+    Vois poistaa/editoida muiden käyttäjien julkisia viestejä
+    Vaatimus HardDeleteen
+
+UserDeletet poistavat myös kaikki käyttäjän viestit
+    Jos hard delete niin silloin hard delete viesteihin, softissa soft delete
+
+SoftDeletoidut userit ja viestit eivät näy hauissa, paitsi jos haetaan specifisti id:llä
 
 
 
