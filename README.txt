@@ -6,7 +6,7 @@ Rajapinnat:
 API Key: LAIHFOEDFAOFJALOFAJSFHWQ
 
 GET: api/Users
-- Requires Authorization
+- Requires Authorization<br>
 Gets the information of all users in database
 
 GET: api/Users/{username}
