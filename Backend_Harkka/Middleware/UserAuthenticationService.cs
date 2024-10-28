@@ -11,7 +11,7 @@ namespace Backend_Harkka.Middleware
     {
         Task<User?> Authenticate(string username, string password);
         public User CreateUserCredentials(User user);
-        Task<bool> isMyMessage(string username, long messageId);
+        Task<bool>IsMyMessage(string username, long messageId);
     }
     public class UserAuthenticationService : IUserAuthenticationService
     {
@@ -69,7 +69,7 @@ namespace Backend_Harkka.Middleware
             return user;
         }
 
-        public async Task<bool> isMyMessage(string username, long messageId)
+        public async Task<bool> IsMyMessage(string username, long messageId)
         {
             User? user = await _userRepository.GetUserAsync(username);
             if (user == null)

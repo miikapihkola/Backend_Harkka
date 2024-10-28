@@ -10,7 +10,7 @@ namespace Backend_Harkka.Models
         [StringLength(50, MinimumLength = 3)]
         [Required]
         public string UserName { get; set; }
-        [MaxLength(25)]
+        [StringLength(25, MinimumLength = 3)]
         public string? FirstName { get; set; }
         [MaxLength(25)]
         public string? LastName { get; set; }

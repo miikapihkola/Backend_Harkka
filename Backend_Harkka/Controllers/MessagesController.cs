@@ -40,14 +40,14 @@ namespace Backend_Harkka.Controllers
             return Ok(await _messageService.GetMessagesAsync(page));
         }
 
-        // GET: api/Messages/user/sent/p_page
+        // GET: api/Messages/username/sent/p_page
         /// <summary>
         /// Get 20 messages sent by specified user ordered by post time
         /// </summary>
         /// <param name="username"></param>
         /// <param name="page"></param>
         /// <returns></returns>
-        [HttpGet("{username}/sent/p_{page}")]
+        [HttpGet("{username}/Sent/p_{page}")]
         [Authorize]
 
         public async Task<ActionResult<IEnumerable<MessageDTO>>> GetMySentMessages(string username, int page)
@@ -59,14 +59,14 @@ namespace Backend_Harkka.Controllers
             return Ok(await _messageService.GetMySentMessagesAsync(username, page));
         }
 
-        // GET: api/Messages/user/received/p_page
+        // GET: api/Messages/username/received/p_page
         /// <summary>
         /// Get 20 messages received by specified user ordered by post time, does not include public messages
         /// </summary>
         /// <param name="username"></param>
         /// <param name="page"></param>
         /// <returns></returns>
-        [HttpGet("{username}/received/p_{page}")]
+        [HttpGet("{username}/Received/p_{page}")]
         [Authorize]
 
         public async Task<ActionResult<IEnumerable<MessageDTO>>> GetMyReceivedMessages(string username, int page)
@@ -89,7 +89,7 @@ namespace Backend_Harkka.Controllers
         public async Task<ActionResult<MessageDTO>> GetMessage(long id)
         {
             string userName = this.User.FindFirst(ClaimTypes.Name)?.Value;
-            if (!await _userAuthenticationService.isMyMessage(userName, id))
+            if (!await _userAuthenticationService.IsMyMessage(userName, id))
             {
                 return Forbid();
             }
@@ -174,7 +174,7 @@ namespace Backend_Harkka.Controllers
         public async Task<IActionResult> DeleteMessage(long id)
         {
             string userName = this.User.FindFirst(ClaimTypes.Name).Value;
-            if (!await _userAuthenticationService.isMyMessage(userName, id))
+            if (!await _userAuthenticationService.IsMyMessage(userName, id))
             {
                 return Forbid();
             }
@@ -198,7 +198,7 @@ namespace Backend_Harkka.Controllers
         public async Task<IActionResult> SoftDelete(long id)
         {
             string userName = this.User.FindFirst(ClaimTypes.Name).Value;
-            if (!await _userAuthenticationService.isMyMessage(userName, id))
+            if (!await _userAuthenticationService.IsMyMessage(userName, id))
             {
                 return Forbid();
             }
