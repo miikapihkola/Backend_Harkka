@@ -11,5 +11,6 @@ namespace Backend_Harkka.Repositories
         Task<Message> NewMessageAsync(Message message);
         Task<bool> UpdateMessageAsync(Message message);
         Task<bool> DeleteMessageAsync(Message message);
+        Task<bool> SoftDeleteMessageAsync(Message message);
     }
 }

@@ -11,6 +11,7 @@ namespace Backend_Harkka.Services
         Task<MessageDTO> NewMessageAsync(MessageDTO message);
         Task<bool> UpdateMessageAsync(MessageDTO message);
         Task<bool> DeleteMessageAsync(long id);
+        Task<bool> SoftDeleteMessageAsync(long id);
 
     }
 }

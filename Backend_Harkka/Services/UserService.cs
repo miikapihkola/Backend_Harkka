@@ -55,8 +55,7 @@ namespace Backend_Harkka.Services
 
             user.MessagesSent = 0;
             user.MessagesReceived = 0;
-            //user.UserCreated = DateTime.Now;
-            //user.LastLogin = DateTime.Now;
+            user.IsDeleted = false;
 
             User? newUser =_userAuthenticationService.CreateUserCredentials(user);
 
@@ -92,6 +91,7 @@ namespace Backend_Harkka.Services
             dto.LastLogin = user.LastLogin;
             dto.MessagesSent = user.MessagesSent;
             dto.MessagesReceived = user.MessagesReceived;
+            dto.IsDeleted = user.IsDeleted;
             return dto;
         }
     }

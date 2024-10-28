@@ -27,44 +27,51 @@ namespace Backend_Harkka.Controllers
             _userAuthenticationService = authenticationService;
         }
 
-        // GET: api/Messages
+        // GET: api/Messages/p_page
         /// <summary>
-        /// Get all public messages
+        /// Get 20 public public messages orderded by post time
         /// </summary>
+        /// <param name="page"></param>
         /// <returns>All messages</returns>
-        [HttpGet("p{page}")]
-
-        // Lisää sivu numero
+        [HttpGet("p_{page}")]
 
         public async Task<ActionResult<IEnumerable<MessageDTO>>> GetMessages(int page)
         {
             return Ok(await _messageService.GetMessagesAsync(page));
         }
 
-        // GET: api/Messages/user/sent
-        [HttpGet("{username}/sent/p{page}")]
+        // GET: api/Messages/user/sent/p_page
+        /// <summary>
+        /// Get 20 messages sent by specified user ordered by post time
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="page"></param>
+        /// <returns></returns>
+        [HttpGet("{username}/sent/p_{page}")]
         [Authorize]
-
-        // Lisää sivu numero
 
         public async Task<ActionResult<IEnumerable<MessageDTO>>> GetMySentMessages(string username, int page)
         {
-            if (username != this.User.FindFirst(ClaimTypes.Name).Value)
+            if (username != this.User.FindFirst(ClaimTypes.Name)?.Value)
             {
                 return Forbid();
             }
             return Ok(await _messageService.GetMySentMessagesAsync(username, page));
         }
 
-        // GET: api/Messages/user/received
-        [HttpGet("{username}/received/p{page}")]
+        // GET: api/Messages/user/received/p_page
+        /// <summary>
+        /// Get 20 messages received by specified user ordered by post time, does not include public messages
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="page"></param>
+        /// <returns></returns>
+        [HttpGet("{username}/received/p_{page}")]
         [Authorize]
-
-        // Lisää sivu numero
 
         public async Task<ActionResult<IEnumerable<MessageDTO>>> GetMyReceivedMessages(string username, int page)
         {
-            if (username != this.User.FindFirst(ClaimTypes.Name).Value)
+            if (username != this.User.FindFirst(ClaimTypes.Name)?.Value)
             {
                 return Forbid();
             }
@@ -81,7 +88,7 @@ namespace Backend_Harkka.Controllers
         [Authorize]
         public async Task<ActionResult<MessageDTO>> GetMessage(long id)
         {
-            string userName = this.User.FindFirst(ClaimTypes.Name).Value;
+            string userName = this.User.FindFirst(ClaimTypes.Name)?.Value;
             if (!await _userAuthenticationService.isMyMessage(userName, id))
             {
                 return Forbid();
@@ -109,7 +116,7 @@ namespace Backend_Harkka.Controllers
         public async Task<IActionResult> PutMessage(long id, MessageDTO message)
         {
             string userName = this.User.FindFirst(ClaimTypes.Name).Value;
-            if (!await _userAuthenticationService.isMyMessage(userName, message.Id))
+            if (this.User.FindFirst(ClaimTypes.Name).Value != message.Sender)
             {
                 return Forbid();
             }
@@ -125,7 +132,7 @@ namespace Backend_Harkka.Controllers
             {
                 return NotFound();
             }
-            
+
 
             return NoContent();
         }
@@ -143,6 +150,11 @@ namespace Backend_Harkka.Controllers
         {
             MessageDTO? newMessage = await _messageService.NewMessageAsync(message);
 
+            string userName = this.User.FindFirst(ClaimTypes.Name).Value;
+            if (this.User.FindFirst(ClaimTypes.Name).Value != message.Sender)
+            {
+                return Forbid();
+            }
             if (newMessage == null)
             {
                 return Problem();
@@ -151,18 +163,14 @@ namespace Backend_Harkka.Controllers
             return CreatedAtAction("GetMessage", new { id = newMessage.Id }, newMessage);
         }
 
-        // DELETE: api/Messages/5
+        // DELETE: api/Messages/HardDelete/5
         /// <summary>
         /// Delete message specified by id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpDelete("{id}")]
+        [HttpDelete("HardDelete/{id}")]
         [Authorize]
-
-        // Mahdollinen admin/moderator oikeus
-        // Delete muuttaminen vaan viestin tietojen poistamiseen
-
         public async Task<IActionResult> DeleteMessage(long id)
         {
             string userName = this.User.FindFirst(ClaimTypes.Name).Value;
@@ -179,5 +187,22 @@ namespace Backend_Harkka.Controllers
             return NoContent();
         }
 
+        [HttpDelete("{id}")]
+        [Authorize]
+        public async Task<IActionResult> SoftDelete(long id)
+        {
+            string userName = this.User.FindFirst(ClaimTypes.Name).Value;
+            if (!await _userAuthenticationService.isMyMessage(userName, id))
+            {
+                return Forbid();
+            }
+            bool result = await _messageService.SoftDeleteMessageAsync(id);
+            if (!result)
+            {
+                return NotFound();
+            }
+
+            return NoContent();
+        }
     }
 }

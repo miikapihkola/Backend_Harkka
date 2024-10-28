@@ -20,6 +20,7 @@ namespace Backend_Harkka.Models
         public Message? PrevMessage { get; set; }
         public DateTime? SendTime { get; set; }
         public DateTime? EditTime { get; set; }
+        public bool IsDeleted { get; set; }
     }
     public class MessageDTO
     {
@@ -37,5 +38,6 @@ namespace Backend_Harkka.Models
         public long? PrevMessageId { get; set; }
         public DateTime? SendTime { get; set; }
         public DateTime? EditTime { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }

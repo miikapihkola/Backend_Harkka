@@ -24,6 +24,17 @@ namespace Backend_Harkka.Services
             return false;
         }
 
+        public async Task<bool> SoftDeleteMessageAsync(long id)
+        {
+            Message? message = await _messageRepository.GetMessageAsync(id);
+            if (message != null)
+            {
+                await _messageRepository.SoftDeleteMessageAsync(message);
+                return true;
+            }
+            return false;
+        }
+
         public async Task<MessageDTO?> GetMessageAsync(long id)
         {
            return MessageToDTO(await _messageRepository.GetMessageAsync(id));
@@ -87,6 +98,7 @@ namespace Backend_Harkka.Services
             dTO.Title = message.Title;
             dTO.Body = message.Body;
             dTO.Sender = message.Sender.UserName;
+            dTO.IsDeleted = message.IsDeleted;
             if (message.Recipient != null)
             {
                 dTO.Recipient = message.Recipient.UserName;
@@ -110,6 +122,7 @@ namespace Backend_Harkka.Services
             newMessage.Title = dTO.Title;
             newMessage.Body = dTO.Body;
             newMessage.SendTime = DateTime.Now;
+            newMessage.IsDeleted = false;
 
             User? sender = await _userRepository.GetUserAsync(dTO.Sender);
             if (sender != null)
@@ -136,7 +149,6 @@ namespace Backend_Harkka.Services
             }
             return newMessage;
         }
-
 
     }
 }

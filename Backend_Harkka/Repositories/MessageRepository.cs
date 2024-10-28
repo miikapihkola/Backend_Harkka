@@ -1,4 +1,5 @@
-﻿using Backend_Harkka.Models;
+﻿using Azure;
+using Backend_Harkka.Models;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
@@ -27,31 +28,45 @@ namespace Backend_Harkka.Repositories
                 return true;
             }
         }
+        public async Task<bool> SoftDeleteMessageAsync(Message message)
+        {
+            if (message == null)
+            {
+                return false;
+            }
+            else
+            {
+                message.Title = "Deleted Message";
+                message.Body = "Deleted Message";
+                message.EditTime = DateTime.Now;
+                message.IsDeleted = true;
+                await _context.SaveChangesAsync();
+                return true;
+            }
+        }
         public async Task<Message?> GetMessageAsync(long id)
         {
             return await _context.Messages.FindAsync(id);
         }
         public async Task<IEnumerable<Message>> GetMessagesAsync(int page)
-        {
-            
-            if (page < 1) page = 1;
-            int maxPage = await GetLastPageAsync();
-            if (page > maxPage) page = maxPage;
-            page--; // Testaa tarviiko näitä
-            Range r = new Range(page, page + itemsPerPage);
-            return await _context.Messages.Include(s=>s.Sender).Where(x => x.Recipient == null).OrderByDescending(x => x.SendTime).Take(r).ToListAsync();
+        {            
+            long itemCount = (await _context.Messages.Where(x => x.Recipient == null).OrderByDescending(x => x.SendTime).ToListAsync()).Count;
+            int pageOut = ConfirmPage(itemCount, page);            
+            return await _context.Messages.Include(s=>s.Sender).Where(x => x.Recipient == null).OrderByDescending(x => x.SendTime).Skip((pageOut - 1) * itemsPerPage).Take(itemsPerPage).ToListAsync();
         }
 
         public async Task<IEnumerable<Message>> GetMyReceivedMessagesAsync(User user, int page)
         {
-            Range r = new Range(0, 20);
-            return await _context.Messages.Include(s => s.Sender).Where(x => x.Recipient == user).OrderByDescending(x => x.SendTime).Take(r).ToListAsync();
+            long itemCount = (await _context.Messages.Where(x => x.Recipient == user).OrderByDescending(x => x.SendTime).ToListAsync()).Count;
+            int pageOut = ConfirmPage(itemCount, page);
+            return await _context.Messages.Include(s => s.Sender).Where(x => x.Recipient == user).OrderByDescending(x => x.SendTime).Skip((pageOut - 1) * itemsPerPage).Take(itemsPerPage).ToListAsync();
         }
 
         public async Task<IEnumerable<Message>> GetMySentMessagesAsync(User user, int page)
         {
-            Range r = new Range(0, 20);
-            return await _context.Messages.Include(s => s.Recipient).Where(x => x.Sender == user).OrderByDescending(x => x.SendTime).Take(r).ToListAsync();
+            long itemCount = (await _context.Messages.Where(x => x.Sender == user).OrderByDescending(x => x.SendTime).ToListAsync()).Count;
+            int pageOut = ConfirmPage(itemCount, page);
+            return await _context.Messages.Include(s => s.Recipient).Where(x => x.Sender == user).OrderByDescending(x => x.SendTime).Skip((pageOut - 1) * itemsPerPage).Take(itemsPerPage).ToListAsync();
         }
 
         public async Task<Message> NewMessageAsync(Message message)
@@ -74,13 +89,15 @@ namespace Backend_Harkka.Repositories
             }
             return true;
         }
-        public async Task<int> GetLastPageAsync()
+        public int ConfirmPage(long itemCount, int page)
         {
-            // Miksi await ei toimi?
-            long lastId = _context.Messages.OrderByDescending(x => x.SendTime).LastOrDefault().Id;
-            double lastPage = lastId / itemsPerPage;
-            if (lastPage - Convert.ToInt32(lastPage) == 0) return Convert.ToInt32(lastPage); 
-            return Convert.ToInt32(lastPage) + 1;
+            int maxPage;
+            if (page < 1) page = 1;
+            double lastPage = Convert.ToDouble(itemCount) / itemsPerPage;
+            if (lastPage - Convert.ToInt32(lastPage) == 0)  maxPage = Convert.ToInt32(lastPage); 
+            else maxPage = Convert.ToInt32(lastPage) + 1;
+            if (page > maxPage) page = maxPage;
+            return page;
         }
     }
 }

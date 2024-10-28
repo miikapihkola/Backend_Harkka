@@ -8,6 +8,7 @@ using Microsoft.OpenApi.Models;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
+var specificOrgins = "AppOrigins";
 // http://localhost:5031/api/Message
 // http://localhost:5031/api/User
 // Add services to the container.
@@ -44,8 +45,24 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IMessageService, MessageService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserAuthenticationService, UserAuthenticationService>();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: specificOrgins,
+                      policy =>
+                      {
+                          //policy.WithOrigins("http://localhost:4200").AllowAnyHeader().AllowAnyMethod();
+                      });
+});
 
 var app = builder.Build();
+
+app.UseCors(specificOrgins);
+using (var scope = app.Services.CreateScope())
+{
+    MessageServiceContext dbcontext = scope.ServiceProvider.GetRequiredService<MessageServiceContext>();
+    dbcontext.Database.EnsureCreated();
+
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
