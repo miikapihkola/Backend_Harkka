@@ -163,13 +163,13 @@ namespace Backend_Harkka.Controllers
             return CreatedAtAction("GetMessage", new { id = newMessage.Id }, newMessage);
         }
 
-        // DELETE: api/Messages/HardDelete/5
+        // DELETE: api/Messages/5/HardDelete
         /// <summary>
-        /// Delete message specified by id
+        /// Delete message specified by id, Can break message threads
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpDelete("HardDelete/{id}")]
+        [HttpDelete("{id}/HardDelete")]
         [Authorize]
         public async Task<IActionResult> DeleteMessage(long id)
         {
@@ -187,6 +187,12 @@ namespace Backend_Harkka.Controllers
             return NoContent();
         }
 
+        // DELETE: api/Messages/5
+        /// <summary>
+        /// Soft Delete message specified by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         [Authorize]
         public async Task<IActionResult> SoftDelete(long id)

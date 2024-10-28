@@ -9,5 +9,6 @@ namespace Backend_Harkka.Services
         Task<UserDTO?> NewUserAsync(User user);
         Task<bool> UpdateUserAsync(User user);
         Task<bool> DeleteUserAsync(string username);
+        Task<bool> SoftDeleteUserAsync(string username);
     }
 }

@@ -24,6 +24,25 @@ namespace Backend_Harkka.Repositories
                 return true;
             }
         }
+        public async Task<bool> SoftDeleteUserAsync(User user)
+        {
+            if (user == null)
+            {
+                return false;
+            }
+            else
+            {
+                user.UserName = "DeletedUser" + user.Id;
+                user.FirstName = null;
+                user.LastName = null;
+                user.Email = null;
+                user.LastLogin = DateTime.Now;
+                user.MessagesSent = 0;
+                user.IsDeleted = true;
+                await _context.SaveChangesAsync();
+                return true;
+            }
+        }
 
         public async Task<User?> GetUserAsync(long id)
         {

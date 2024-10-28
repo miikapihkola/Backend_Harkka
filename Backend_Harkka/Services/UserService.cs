@@ -19,7 +19,18 @@ namespace Backend_Harkka.Services
             User? user = await _repository.GetUserAsync(username);
             if (user != null)
             {
+                //Tähän kohtaa message delete loop
                 return await _repository.DeleteUserAsync(user);
+            }
+            return false;
+        }
+        public async Task<bool> SoftDeleteUserAsync(string username)
+        {
+            User? user = await _repository.GetUserAsync(username);
+            if (user != null)
+            {
+                //Tähän kohtaa message delete loop
+                return await _repository.SoftDeleteUserAsync(user);
             }
             return false;
         }

@@ -28,7 +28,7 @@ namespace Backend_Harkka.Middleware
             User? user;
 
             user = await _userRepository.GetUserAsync(username);
-            if (user == null)
+            if (user == null || user.IsDeleted)
             {
                 return null;
             }

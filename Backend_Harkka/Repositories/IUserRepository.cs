@@ -10,5 +10,6 @@ namespace Backend_Harkka.Repositories
         Task<User?> NewUserAsync(User user);
         Task<bool> UpdateUserAsync(User user);
         Task<bool> DeleteUserAsync(User user);
+        Task<bool> SoftDeleteUserAsync(User user);
     }
 }

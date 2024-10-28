@@ -103,13 +103,13 @@ namespace Backend_Harkka.Controllers
             return CreatedAtAction("GetUser", new {username = user.UserName}, user);
         }
 
-        // DELETE: api/Users/username
+        // DELETE: api/Users/username/HardDelete
         /// <summary>
         /// Delete user specified by username
         /// </summary>
         /// <param name="username"></param>
         /// <returns></returns>
-        [HttpDelete("{username}")]
+        [HttpDelete("{username}/HardDelete")]
         [Authorize]
 
         // Delete muuttaminen sellaiseksi että username muutetaan deleted ja poistetaan muut tietueet sekä kutsutaan message controllerin deleteä jokaseen viestiin
@@ -121,6 +121,29 @@ namespace Backend_Harkka.Controllers
                 return Forbid();
             }
             bool result = await _userService.DeleteUserAsync(username);
+            if (!result)
+            {
+                return NotFound();
+            }
+
+            return NoContent();
+        }
+
+        // DELETE: api/Users/username
+        /// <summary>
+        /// Wipe user specified by username
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
+        [HttpDelete("{username}")]
+        [Authorize]
+        public async Task<IActionResult> SoftDeleteUser(string username)
+        {
+            if (username != this.User.FindFirst(ClaimTypes.Name).Value)
+            {
+                return Forbid();
+            }
+            bool result = await _userService.SoftDeleteUserAsync(username);
             if (!result)
             {
                 return NotFound();
