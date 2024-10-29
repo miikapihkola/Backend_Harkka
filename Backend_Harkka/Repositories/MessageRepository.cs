@@ -50,23 +50,23 @@ namespace Backend_Harkka.Repositories
         }
         public async Task<IEnumerable<Message>> GetMessagesAsync(int page)
         {            
-            long itemCount = (await _context.Messages.Where(x => x.Recipient == null).OrderByDescending(x => x.SendTime).ToListAsync()).Count;
+            long itemCount = (await _context.Messages.Where(x => x.Recipient == null).Where(x => x.IsDeleted == false).OrderByDescending(x => x.SendTime).ToListAsync()).Count;
             int pageOut = ConfirmPage(itemCount, page);            
-            return await _context.Messages.Include(s=>s.Sender).Where(x => x.Recipient == null).OrderByDescending(x => x.SendTime).Skip((pageOut - 1) * itemsPerPage).Take(itemsPerPage).ToListAsync();
+            return await _context.Messages.Include(s=>s.Sender).Where(x => x.Recipient == null).Where(x => x.IsDeleted == false).OrderByDescending(x => x.SendTime).Skip((pageOut - 1) * itemsPerPage).Take(itemsPerPage).ToListAsync();
         }
 
         public async Task<IEnumerable<Message>> GetMyReceivedMessagesAsync(User user, int page)
         {
-            long itemCount = (await _context.Messages.Where(x => x.Recipient == user).OrderByDescending(x => x.SendTime).ToListAsync()).Count;
+            long itemCount = (await _context.Messages.Where(x => x.Recipient == user).Where(x => x.IsDeleted == false).OrderByDescending(x => x.SendTime).ToListAsync()).Count;
             int pageOut = ConfirmPage(itemCount, page);
-            return await _context.Messages.Include(s => s.Sender).Where(x => x.Recipient == user).OrderByDescending(x => x.SendTime).Skip((pageOut - 1) * itemsPerPage).Take(itemsPerPage).ToListAsync();
+            return await _context.Messages.Include(s => s.Sender).Where(x => x.Recipient == user).Where(x => x.IsDeleted == false).OrderByDescending(x => x.SendTime).Skip((pageOut - 1) * itemsPerPage).Take(itemsPerPage).ToListAsync();
         }
 
         public async Task<IEnumerable<Message>> GetMySentMessagesAsync(User user, int page)
         {
-            long itemCount = (await _context.Messages.Where(x => x.Sender == user).OrderByDescending(x => x.SendTime).ToListAsync()).Count;
+            long itemCount = (await _context.Messages.Where(x => x.Sender == user).Where(x => x.IsDeleted == false).OrderByDescending(x => x.SendTime).ToListAsync()).Count;
             int pageOut = ConfirmPage(itemCount, page);
-            return await _context.Messages.Include(s => s.Recipient).Where(x => x.Sender == user).OrderByDescending(x => x.SendTime).Skip((pageOut - 1) * itemsPerPage).Take(itemsPerPage).ToListAsync();
+            return await _context.Messages.Include(s => s.Recipient).Where(x => x.Sender == user).Where(x => x.IsDeleted == false).OrderByDescending(x => x.SendTime).Skip((pageOut - 1) * itemsPerPage).Take(itemsPerPage).ToListAsync();
         }
 
         public async Task<Message> NewMessageAsync(Message message)

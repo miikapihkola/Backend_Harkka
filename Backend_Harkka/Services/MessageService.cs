@@ -98,7 +98,6 @@ namespace Backend_Harkka.Services
             dTO.Title = message.Title;
             dTO.Body = message.Body;
             dTO.Sender = message.Sender.UserName;
-            dTO.IsDeleted = message.IsDeleted;
             if (message.Recipient != null)
             {
                 dTO.Recipient = message.Recipient.UserName;

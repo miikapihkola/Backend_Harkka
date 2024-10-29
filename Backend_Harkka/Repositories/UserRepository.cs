@@ -56,7 +56,7 @@ namespace Backend_Harkka.Repositories
 
         public async Task<IEnumerable<User>> GetUsersAsync()
         {
-            return await _context.Users.ToListAsync();
+            return await _context.Users.Where(x => x.IsDeleted == false).ToListAsync();
         }
 
         public async Task<User?> NewUserAsync(User user)

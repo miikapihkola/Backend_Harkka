@@ -59,11 +59,10 @@ namespace Backend_Harkka.Services
         public async Task<UserDTO?> NewUserAsync(User user)
         {
             User? dbUser = await _repository.GetUserAsync(user.UserName);
-            if (dbUser != null)
+            if (dbUser != null || user.UserName.ToLower().Contains("deleted"))
             {
                 return null;
             }
-
             user.MessagesSent = 0;
             user.MessagesReceived = 0;
             user.IsDeleted = false;
@@ -102,7 +101,6 @@ namespace Backend_Harkka.Services
             dto.LastLogin = user.LastLogin;
             dto.MessagesSent = user.MessagesSent;
             dto.MessagesReceived = user.MessagesReceived;
-            dto.IsDeleted = user.IsDeleted;
             return dto;
         }
     }
