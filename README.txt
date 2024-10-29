@@ -40,7 +40,7 @@ Get 20 messages sent by specified user ordered by post time, increasing pagenumb
 
 GET: api/Messages/username/Received/p_{pageNumber}
 - Requires Authorization
-Get 20 messages received by specified user ordered by post time, increasing pagenumber shifts startpoint to later point
+Get 20 messages received by specified user ordered by post time, increasing pagenumber shifts startpoint to later point, does not include public messages
 
 GET: api/Messages/{MessageId}
 - Requires Authorization
