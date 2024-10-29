@@ -4,7 +4,7 @@ namespace Backend_Harkka.Repositories
 {
     public interface IUserRepository
     {
-        Task<IEnumerable<User>> GetUsersAsync();
+        Task<IEnumerable<User>> GetUsersAsync(int page);
         Task<User?> GetUserAsync(long id);
         Task<User?> GetUserAsync(string username);
         Task<User?> NewUserAsync(User user);

@@ -29,7 +29,7 @@ namespace Backend_Harkka.Controllers
 
         // GET: api/Messages/p_page
         /// <summary>
-        /// Get 20 public public messages orderded by post time
+        /// Get 20 public public messages orderded by post time, increasing pagenumber shifts startpoint to later point
         /// </summary>
         /// <param name="page"></param>
         /// <returns>All messages</returns>
@@ -42,7 +42,7 @@ namespace Backend_Harkka.Controllers
 
         // GET: api/Messages/username/sent/p_page
         /// <summary>
-        /// Get 20 messages sent by specified user ordered by post time
+        /// Get 20 messages sent by specified user ordered by post time, increasing pagenumber shifts startpoint to later point
         /// </summary>
         /// <param name="username"></param>
         /// <param name="page"></param>
@@ -61,7 +61,7 @@ namespace Backend_Harkka.Controllers
 
         // GET: api/Messages/username/received/p_page
         /// <summary>
-        /// Get 20 messages received by specified user ordered by post time, does not include public messages
+        /// Get 20 messages received by specified user ordered by post time, does not include public messages, increasing pagenumber shifts startpoint to later point
         /// </summary>
         /// <param name="username"></param>
         /// <param name="page"></param>

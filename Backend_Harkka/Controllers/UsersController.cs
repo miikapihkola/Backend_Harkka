@@ -23,16 +23,16 @@ namespace Backend_Harkka.Controllers
             _userService = service;
         }
 
-        // GET: api/Users
+        // GET: api/Users/p_page
         /// <summary>
-        /// Gets the information of all users in database
+        /// Gets the information of 20 users in database ordered by username, increasing pagenumber shifts startpoint to later point
         /// </summary>
         /// <returns>List of Users</returns>
-        [HttpGet]
+        [HttpGet("p_{page}")]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<UserDTO>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<UserDTO>>> GetUsers(int page)
         {
-            return Ok(await _userService.GetUsersAsync());
+            return Ok(await _userService.GetUsersAsync(page));
         }
 
         // GET: api/Users/username

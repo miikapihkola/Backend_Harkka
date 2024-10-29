@@ -5,6 +5,8 @@ namespace Backend_Harkka.Repositories
 {
     public class UserRepository : IUserRepository
     {
+        const int itemsPerPage = 20;
+
         MessageServiceContext _context;
         public UserRepository(MessageServiceContext context)
         {
@@ -54,9 +56,11 @@ namespace Backend_Harkka.Repositories
             return await _context.Users.Where(user => user.UserName == username).FirstOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<User>> GetUsersAsync()
+        public async Task<IEnumerable<User>> GetUsersAsync(int page)
         {
-            return await _context.Users.Where(x => x.IsDeleted == false).ToListAsync();
+            long itemCount = (await _context.Users.Where(x => x.IsDeleted == false).ToListAsync()).Count;
+            int pageOut = ConfirmPage(itemCount, page);
+            return await _context.Users.Where(x => x.IsDeleted == false).OrderBy(x => x.UserName).Skip((pageOut - 1) * itemsPerPage).Take(itemsPerPage).ToListAsync();
         }
 
         public async Task<User?> NewUserAsync(User user)
@@ -78,6 +82,17 @@ namespace Backend_Harkka.Repositories
                 return false;
             }
             return true;
+        }
+
+        private int ConfirmPage(long itemCount, int page)
+        {
+            int maxPage;
+            if (page < 1) page = 1;
+            double lastPage = Convert.ToDouble(itemCount) / itemsPerPage;
+            if (lastPage - Convert.ToInt32(lastPage) == 0) maxPage = Convert.ToInt32(lastPage);
+            else maxPage = Convert.ToInt32(lastPage) + 1;
+            if (page > maxPage) page = maxPage;
+            return page;
         }
     }
 }

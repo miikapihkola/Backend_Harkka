@@ -45,9 +45,9 @@ namespace Backend_Harkka.Services
             return UserToDTO(user);
         }
 
-        public async Task<IEnumerable<UserDTO>> GetUsersAsync()
+        public async Task<IEnumerable<UserDTO>> GetUsersAsync(int page)
         {
-            IEnumerable<User> users = await _repository.GetUsersAsync();
+            IEnumerable<User> users = await _repository.GetUsersAsync(page);
             List<UserDTO> result = new List<UserDTO>();
             foreach (User user in users)
             {
