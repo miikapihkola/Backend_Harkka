@@ -27,7 +27,8 @@ namespace Backend_Harkka.Controllers
         /// <summary>
         /// Gets the information of 20 users in database ordered by username, increasing pagenumber shifts startpoint to later point
         /// </summary>
-        /// <returns>List of Users</returns>
+        /// <param name="page"></param>
+        /// <returns></returns>
         [HttpGet("p_{page}")]
         [Authorize]
         public async Task<ActionResult<IEnumerable<UserDTO>>> GetUsers(int page)
