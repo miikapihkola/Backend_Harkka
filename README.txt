@@ -7,9 +7,9 @@ Rajapinnat:
 
 API Key: LAIHFOEDFAOFJALOFAJSFHWQ
 
-GET: api/Users
+GET: api/Users/p_{page}
 - Requires Authorization
-Gets the information of all users in database
+Gets the information of 20 users in database ordered by username, increasing pagenumber shifts startpoint to later point
 
 GET: api/Users/{username}
 - Requires Authorization
@@ -32,15 +32,15 @@ DELETE: api/Users/{username}
 Wipe user specified by username
 
 GET: api/Messages/p_{pageNumber}
-Get 20 public public messages orderded by post time
+Get 20 public public messages ordered by post time, increasing pagenumber shifts startpoint to later point
 
 GET: api/Messages/{username}/Sent/p_{pageNumber}
 - Requires Authorization
-Get 20 messages sent by specified user ordered by post time
+Get 20 messages sent by specified user ordered by post time, increasing pagenumber shifts startpoint to later point
 
 GET: api/Messages/username/Received/p_{pageNumber}
 - Requires Authorization
-Get 20 messages received by specified user ordered by post time
+Get 20 messages received by specified user ordered by post time, increasing pagenumber shifts startpoint to later point, does not include public messages
 
 GET: api/Messages/{MessageId}
 - Requires Authorization
@@ -66,14 +66,14 @@ Wipe message specified by id
 -----------------------
 Esimerkki viesti ja käyttäjä:
 
-Headeriin:
+Header:
 ApiKey: LAIHFOEDFAOFJALOFAJSFHWQ
 Authorization: Basic YWFhOnh5emE=
 (authorization on muotoa "Basic " + Basic64 koodattu"username:password")
 Basic64 koodaus esim sivulta https://www.base64encode.org/
 
-Käyttäjä:
-- required fields: UserName (Lenght between 3 and 25), Password (Lenght between 4 and 100)
+User:
+- required fields: UserName (Lenght between 3 and 25, must be unique and cannot contain word "deleted"), Password (Lenght between 4 and 100)
 - optional fields: FirstName, LastName, Email
 {
     "username": "aaa",
@@ -83,7 +83,7 @@ Käyttäjä:
     "lastname":"lname"
 }
 
-Viesti:
+Message:
 - required fields: Title (Lenght between 1 and 100), Body (Lenght between 1 and 1000), sender(username)
 - optional fields: Recipient (username, if null then message is public)
 {
@@ -171,13 +171,12 @@ Jatkokehitys ideoita:
 
 Admin oikeudet
     Voi lukea muiden käyttäjien viestejä
-    Vois poistaa/editoida muiden käyttäjien julkisia viestejä
+    Voi poistaa/editoida muiden käyttäjien julkisia viestejä
+    Voi poistaa/editoida muita käyttäjiä
     Vaatimus HardDeleteen
 
 UserDeletet poistavat myös kaikki käyttäjän viestit
     Jos hard delete niin silloin hard delete viesteihin, softissa soft delete
-
-SoftDeletoidut userit ja viestit eivät näy hauissa, paitsi jos haetaan specifisti id:llä
 
 
 
