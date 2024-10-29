@@ -7,9 +7,9 @@ Rajapinnat:
 
 API Key: LAIHFOEDFAOFJALOFAJSFHWQ
 
-GET: api/Users
+GET: api/Users/p_{page}
 - Requires Authorization
-Gets the information of all users in database
+Gets the information of 20 users in database ordered by username, increasing pagenumber shifts startpoint to later point
 
 GET: api/Users/{username}
 - Requires Authorization
@@ -32,15 +32,15 @@ DELETE: api/Users/{username}
 Wipe user specified by username
 
 GET: api/Messages/p_{pageNumber}
-Get 20 public public messages orderded by post time
+Get 20 public public messages ordered by post time, increasing pagenumber shifts startpoint to later point
 
 GET: api/Messages/{username}/Sent/p_{pageNumber}
 - Requires Authorization
-Get 20 messages sent by specified user ordered by post time
+Get 20 messages sent by specified user ordered by post time, increasing pagenumber shifts startpoint to later point
 
 GET: api/Messages/username/Received/p_{pageNumber}
 - Requires Authorization
-Get 20 messages received by specified user ordered by post time
+Get 20 messages received by specified user ordered by post time, increasing pagenumber shifts startpoint to later point
 
 GET: api/Messages/{MessageId}
 - Requires Authorization
