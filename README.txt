@@ -3,6 +3,11 @@
 Warning: Read this txt as a file, not in narrow previw window. Line wraping should be OFF
 
 -----------------------
+Intro:
+
+Mitä miksi milloin
+
+-----------------------
 Rajapinnat:
 
 API Key: LAIHFOEDFAOFJALOFAJSFHWQ
@@ -73,6 +78,7 @@ Authorization: Basic YWFhOnh5emE=
 Basic64 koodaus esim sivulta https://www.base64encode.org/
 
 User:
+- automatically filled: 
 - required fields: UserName (Lenght between 3 and 25, must be unique and cannot contain word "deleted"), Password (Lenght between 4 and 100)
 - optional fields: FirstName, LastName, Email
 {
@@ -84,17 +90,26 @@ User:
 }
 
 Message:
+- automatically filled: 
 - required fields: Title (Lenght between 1 and 100), Body (Lenght between 1 and 1000), sender(username)
-- optional fields: Recipient (username, if null then message is public)
+- optional fields: Recipient (username, if null then message is public), prevMessageId
 {
     "title": "title",
     "body": "body",
     "sender": "aaa",
-    "recipient":"bbb"
+    "recipient":"bbb",
+    "prevmessageid": 1
 }
 
 -----------------------
+How to create user:
+
+
+
+-----------------------
 Rakenne:
+
+Tällainen rakenne helpottaa ylläpidon helppoutta ja jatkokehitysmahdollisuuksia:
 
 Controllers - Viestin käsittelijät, kutsuu myös authorisaatio ja claimi tarkistuksia. Kutsuvat omasta servicelle viestin mukaista async taskia ja Palauttaa statuksesta kertovan koodin sekä onnistuessa muut kutsutut tiedot
 > MessagesController.cs
@@ -178,6 +193,17 @@ Admin oikeudet
 UserDeletet poistavat myös kaikki käyttäjän viestit
     Jos hard delete niin silloin hard delete viesteihin, softissa soft delete
 
+HardDelete
+    Kuinka viestiketjut reagoi?
 
+Pyydettäessä listoja
+    kertoo kun on viimeinen sivu
+
+
+-----------
+softdelete kerro mitä tekee tarkasti
+response koodit ja parametrit
+lisää esimerkin alkuun kuinka luodaan käytäjä
+mainitse mitä tarvii käyttäjän luomisessa
 
 
