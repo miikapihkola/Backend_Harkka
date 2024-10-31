@@ -25,7 +25,7 @@ namespace Backend_Harkka.Controllers
 
         // GET: api/Users/p_page
         /// <summary>
-        /// Gets the information of 20 users in database ordered by username, increasing pagenumber shifts startpoint to later point
+        /// Gets the information of 20 users in database ordered by username, increasing pagenumber shifts startpoint to later point, does not include users marked as deleted
         /// </summary>
         /// <param name="page"></param>
         /// <returns></returns>
@@ -59,7 +59,7 @@ namespace Backend_Harkka.Controllers
         // PUT: api/Users/username
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         /// <summary>
-        /// Update user information
+        /// Update user information, updates last login time.
         /// </summary>
         /// <param name="username"></param>
         /// <param name="user"></param>
@@ -101,7 +101,7 @@ namespace Backend_Harkka.Controllers
                 return Problem("Username not available", statusCode:400);
             }
 
-            return CreatedAtAction("GetUser", new {username = user.UserName}, user);
+            return CreatedAtAction("GetUser", new {username = newUser.UserName}, newUser);
         }
 
         // DELETE: api/Users/username/HardDelete
@@ -132,7 +132,7 @@ namespace Backend_Harkka.Controllers
 
         // DELETE: api/Users/username
         /// <summary>
-        /// Wipe user specified by username
+        /// Wipe user specified by username (Changes username as DeletedUserX where X is replaced with User Id, changes following values as null: {FirstName, LastName, Email}, changes IsDeleted value as True), updates last login time.
         /// </summary>
         /// <param name="username"></param>
         /// <returns></returns>

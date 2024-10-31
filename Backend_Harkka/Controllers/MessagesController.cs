@@ -29,7 +29,7 @@ namespace Backend_Harkka.Controllers
 
         // GET: api/Messages/p_page
         /// <summary>
-        /// Get 20 public public messages orderded by post time, increasing pagenumber shifts startpoint to later point
+        /// Get 20 public public messages ordered by post time, increasing pagenumber shifts startpoint to later point, does not include messages marked as deleted
         /// </summary>
         /// <param name="page"></param>
         /// <returns>All messages</returns>
@@ -42,7 +42,7 @@ namespace Backend_Harkka.Controllers
 
         // GET: api/Messages/username/sent/p_page
         /// <summary>
-        /// Get 20 messages sent by specified user ordered by post time, increasing pagenumber shifts startpoint to later point
+        /// Get 20 messages sent by specified user ordered by post time, increasing pagenumber shifts startpoint to later point, does not include messages marked as deleted
         /// </summary>
         /// <param name="username"></param>
         /// <param name="page"></param>
@@ -61,7 +61,7 @@ namespace Backend_Harkka.Controllers
 
         // GET: api/Messages/username/received/p_page
         /// <summary>
-        /// Get 20 messages received by specified user ordered by post time, does not include public messages, increasing pagenumber shifts startpoint to later point
+        /// Get 20 messages received by specified user ordered by post time, increasing pagenumber shifts startpoint to later point, does not include public messages or messages marked as deleted
         /// </summary>
         /// <param name="username"></param>
         /// <param name="page"></param>
@@ -82,18 +82,18 @@ namespace Backend_Harkka.Controllers
         /// <summary>
         /// Get message by id
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="messageId"></param>
         /// <returns>Message specified by id or empty</returns>
-        [HttpGet("{id}")]
+        [HttpGet("{messageId}")]
         [Authorize]
-        public async Task<ActionResult<MessageDTO>> GetMessage(long id)
+        public async Task<ActionResult<MessageDTO>> GetMessage(long messageId)
         {
             string userName = this.User.FindFirst(ClaimTypes.Name)?.Value;
-            if (!await _userAuthenticationService.IsMyMessage(userName, id))
+            if (!await _userAuthenticationService.IsMyMessage(userName, messageId))
             {
                 return Forbid();
             }
-            MessageDTO message = await _messageService.GetMessageAsync(id);
+            MessageDTO message = await _messageService.GetMessageAsync(messageId);
 
             if (message == null)
             {
@@ -106,14 +106,14 @@ namespace Backend_Harkka.Controllers
         // PUT: api/Messages/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         /// <summary>
-        /// Update message by id
+        /// Update message by id, updates EditTime
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="messageId"></param>
         /// <param name="message"></param>
         /// <returns></returns>
-        [HttpPut("{id}")]
+        [HttpPut("{messageId}")]
         [Authorize]
-        public async Task<IActionResult> PutMessage(long id, MessageDTO message)
+        public async Task<IActionResult> PutMessage(long messageId, MessageDTO message)
         {
             string userName = this.User.FindFirst(ClaimTypes.Name).Value;
             if (this.User.FindFirst(ClaimTypes.Name).Value != message.Sender)
@@ -121,7 +121,7 @@ namespace Backend_Harkka.Controllers
                 return Forbid();
             }
 
-            if (id != message.Id)
+            if (messageId != message.Id)
             {
                 return BadRequest();
             }
@@ -140,7 +140,7 @@ namespace Backend_Harkka.Controllers
         // POST: api/Messages
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         /// <summary>
-        /// Create new message
+        /// Create new message, increase senders sent messages and recipients(if included) received messages number by 1 
         /// </summary>
         /// <param name="message"></param>
         /// <returns></returns>
@@ -148,13 +148,12 @@ namespace Backend_Harkka.Controllers
         [Authorize]
         public async Task<ActionResult<MessageDTO>> PostMessage(MessageDTO message)
         {
-            MessageDTO? newMessage = await _messageService.NewMessageAsync(message);
-
             string userName = this.User.FindFirst(ClaimTypes.Name).Value;
             if (this.User.FindFirst(ClaimTypes.Name).Value != message.Sender)
             {
                 return Forbid();
             }
+            MessageDTO? newMessage = await _messageService.NewMessageAsync(message);
             if (newMessage == null)
             {
                 return Problem();
@@ -167,18 +166,18 @@ namespace Backend_Harkka.Controllers
         /// <summary>
         /// Delete message specified by id, Can break message threads
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="messageId"></param>
         /// <returns></returns>
-        [HttpDelete("{id}/HardDelete")]
+        [HttpDelete("{messageId}/HardDelete")]
         [Authorize]
-        public async Task<IActionResult> DeleteMessage(long id)
+        public async Task<IActionResult> DeleteMessage(long messageId)
         {
             string userName = this.User.FindFirst(ClaimTypes.Name).Value;
-            if (!await _userAuthenticationService.IsMyMessage(userName, id))
+            if (!await _userAuthenticationService.IsMyMessage(userName, messageId))
             {
                 return Forbid();
             }
-            bool result = await _messageService.DeleteMessageAsync(id);
+            bool result = await _messageService.DeleteMessageAsync(messageId);
             if (!result)
             {
                 return NotFound();
@@ -189,20 +188,20 @@ namespace Backend_Harkka.Controllers
 
         // DELETE: api/Messages/5
         /// <summary>
-        /// Soft Delete message specified by id
+        /// Wipe message specified by id (Changes title and body as "Deleted Message", changes IsDeleted value as True), updates EditTime
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="messageId"></param>
         /// <returns></returns>
-        [HttpDelete("{id}")]
+        [HttpDelete("{messageId}")]
         [Authorize]
-        public async Task<IActionResult> SoftDelete(long id)
+        public async Task<IActionResult> SoftDelete(long messageId)
         {
             string userName = this.User.FindFirst(ClaimTypes.Name).Value;
-            if (!await _userAuthenticationService.IsMyMessage(userName, id))
+            if (!await _userAuthenticationService.IsMyMessage(userName, messageId))
             {
                 return Forbid();
             }
-            bool result = await _messageService.SoftDeleteMessageAsync(id);
+            bool result = await _messageService.SoftDeleteMessageAsync(messageId);
             if (!result)
             {
                 return NotFound();

@@ -39,7 +39,6 @@ namespace Backend_Harkka.Repositories
                 user.LastName = null;
                 user.Email = null;
                 user.LastLogin = DateTime.Now;
-                user.MessagesSent = 0;
                 user.IsDeleted = true;
                 await _context.SaveChangesAsync();
                 return true;
