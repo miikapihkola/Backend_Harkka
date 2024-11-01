@@ -16,7 +16,7 @@ List of api calls:
 Every call requires following ApiKey.
 ApiKey: LAIHFOEDFAOFJALOFAJSFHWQ
 
---- Users Api: ---
+--- Users ---
 
 GET: api/Users/p_{page}
 - Requires Authorization
@@ -54,7 +54,7 @@ Wipe user specified by username (Changes username as "DeletedUserX" where X is r
 Parameters: username
 Response code: 204 (No Content)
 
---- Messages Api: ---
+--- Messages ---
 
 GET: api/Messages/p_{pageNumber}
 Get 20 public public messages ordered by post time, increasing pagenumber shifts startpoint to later point, does not include messages marked as deleted
