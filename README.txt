@@ -3,11 +3,12 @@
 Warning: Read this txt as a file, not in narrow previw window. Line wraping should be OFF
 
 -----------------------
-Intro:
+Description:
 
+What: An ASP.NET Core Web API for sending and receiving messages
 Why: This is practice project for cource "AL00CM24-3003 Back-end työkalut" from "LAB - Ammattikorkeakoulu"
 When: 02.09.2024 - 3.11.2024
-What: // LISÄÄ TEXTI
+Licence: CC0
 
 -----------------------
 List of api calls:
@@ -139,14 +140,9 @@ Message:
 }
 
 -----------------------
-How to create DataBase:
+Database Connection:
 
-Go to appsettings.json and locate part:
-    "MessageServiceDB": "Server=localhost;Database=MessageServiceDB;Trusted_Connection=True;Encrypt=false;"
-You need to change it to to correspond your server if using non local database
-
-If using local database, use powershell "cd .\" to navigate to right folder
-Then just run "dotnet ef database update"
+Database connection can be changed from file appsettings.json
 
 -----------------------
 How to create User:
@@ -160,8 +156,7 @@ Call "POST: api/Users"
 
 To Use authorized calls
 Turn user credentials into style username:password and then encode it using Base64
-Now add another header "Authorization" and it's value will be following combination "Basic " followed by your encoded credentials
-    
+Now add another header "Authorization" and it's value will be following combination "Basic " followed by your encoded credentials    
 
 -----------------------
 Rakenne:
@@ -251,8 +246,8 @@ UserDeletet poistavat myös kaikki käyttäjän viestit
     Jos hard delete niin silloin hard delete viesteihin, softissa soft delete
 
 HardDelete
-    Kuinka viestiketjut reagoi?
+    Kuinka viestiketjut reagoi jos poistetaan välistä viesti tai kuinka viestit reagoi jos lähettäjä poistetaan
 
 Pyydettäessä listoja
-    kertoo kun on viimeinen sivu
+    kertoo mitkä viestit näytetään esim tyylillä "21 to 40 from 89 messages"
 
